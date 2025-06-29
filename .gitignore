@@ -1,0 +1,9 @@
+.idea/
+__pycache__/
+LabletAnomaly.egg-info/
+patchcore.egg-info
+models/
+datasets/
+evaluation_results/
+visualization_results/
+results/
