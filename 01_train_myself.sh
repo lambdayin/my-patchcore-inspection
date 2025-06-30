@@ -1,4 +1,4 @@
-datapath=/mnt/lustre/GPU2/home/yinlei/projects/interest/patchcore_projects/patchcore-inspection/datasets/mvtec_dataset
+datapath=/home/yinlei/projects/interest/patchcore_projects/my-patchcore-inspection/datasets_all/mvtec_dataset
 datasets=('bottle'  'cable')
 dataset_flags=($(for dataset in "${datasets[@]}"; do echo '-d '"${dataset}"; done))
 
@@ -14,11 +14,11 @@ dataset_flags=($(for dataset in "${datasets[@]}"; do echo '-d '"${dataset}"; don
 ### IM320
 # Baseline: Backbone: WR50, Blocks: 2 & 3, Coreset Percentage: 1%, Embedding Dimensionalities: 1024 > 1024, neighbourhood aggr. size: 5, neighbours: 3, seed: 39
 # Performance: Instance AUROC: 0.99, Pixelwise AUROC: 0.984, PRO: 0.942
-# python bin/run_patchcore.py --gpu 3 --seed 22 --save_patchcore_model --log_group IM320_WR50_L2-3_P001_D1024-1024_PS-5_AN-3_S39 --log_project MVTecAD_Results results \
-# patch_core -b wideresnet50 -le layer2 -le layer3 --faiss_on_gpu --pretrain_embed_dimension 1024  --target_embed_dimension 1024 --anomaly_scorer_num_nn 3 --patchsize 5 sampler -p 0.01 approx_greedy_coreset dataset --resize 366 --imagesize 320 "${dataset_flags[@]}" mvtec $datapath
+python bin/run_patchcore.py --gpu 3 --seed 22 --save_patchcore_model --log_group IM320_WR50_L2-3_P001_D1024-1024_PS-5_AN-3_S39 --log_project MVTecAD_Results results \
+patch_core -b wideresnet50 -le layer2 -le layer3 --faiss_on_gpu --pretrain_embed_dimension 1024  --target_embed_dimension 1024 --anomaly_scorer_num_nn 3 --patchsize 5 sampler -p 0.01 approx_greedy_coreset dataset --resize 366 --imagesize 320 "${dataset_flags[@]}" mvtec $datapath
 
-python bin/run_patchcore.py --gpu 3 --seed 22 --save_patchcore_model --log_group IM320_DENSENET201_L2-3_P001_D1024-1024_PS-5_AN-3_S39 --log_project MVTecAD_Results results \
-patch_core -b densenet201 -le features.denseblock2 -le features.denseblock3 --faiss_on_gpu --pretrain_embed_dimension 1024  --target_embed_dimension 1024 --anomaly_scorer_num_nn 3 --patchsize 5 sampler -p 0.01 approx_greedy_coreset dataset --resize 366 --imagesize 320 "${dataset_flags[@]}" mvtec $datapath
+# python bin/run_patchcore.py --gpu 3 --seed 22 --save_patchcore_model --log_group IM320_DENSENET201_L2-3_P001_D1024-1024_PS-5_AN-3_S39 --log_project MVTecAD_Results results \
+# patch_core -b densenet201 -le features.denseblock2 -le features.denseblock3 --faiss_on_gpu --pretrain_embed_dimension 1024  --target_embed_dimension 1024 --anomaly_scorer_num_nn 3 --patchsize 5 sampler -p 0.01 approx_greedy_coreset dataset --resize 366 --imagesize 320 "${dataset_flags[@]}" mvtec $datapath
 
 
 # python bin/run_patchcore.py --gpu 3 --seed 88 --save_patchcore_model --log_group IM320_Ensemble_L2-3_P001_D1024-384_PS-5_AN-5_S88 --log_project MVTecAD_Results results \

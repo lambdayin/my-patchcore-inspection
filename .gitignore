@@ -3,7 +3,7 @@ __pycache__/
 LabletAnomaly.egg-info/
 patchcore.egg-info
 models/
-datasets/
+datasets_all/
 evaluation_results/
 visualization_results/
 results/
