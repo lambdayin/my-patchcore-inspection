@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 
+import tqdm
 import click
 import matplotlib.pyplot as plt
 import numpy as np
@@ -101,10 +102,9 @@ def run(methods, results_path, gpu, seed, save_segmentation_images, threshold):
 
             visualize_images(
                 results_path,
-                image_paths,
+                dataloaders["testing"],
                 segmentations,
                 threshold,
-                dataset_name,
             )
 
             del PatchCore_list
@@ -113,16 +113,25 @@ def run(methods, results_path, gpu, seed, save_segmentation_images, threshold):
         LOGGER.info("\n\n-----\n")
 
 
-def visualize_images(
-    results_path, image_paths, segmentations, threshold, dataset_name
-):
+def visualize_images(results_path, dataloader, segmentations, threshold):
+    dataset_name = dataloader.name
     category = dataset_name.split("_")[-1]
-    save_folder = os.path.join(
-        results_path, "MVTecAD_Results", category
-    )
-    os.makedirs(save_folder, exist_ok=True)
+    data_path = dataloader.dataset.source
+    image_paths = [x[2] for x in dataloader.dataset.data_to_iterate]
 
-    for image_path, segmentation in zip(image_paths, segmentations):
+    # Add tqdm for progress bar
+    for image_path, segmentation in tqdm.tqdm(
+        zip(image_paths, segmentations), total=len(image_paths), desc="Generating images"
+    ):
+        # Create the full output path including subdirectories
+        relative_path = os.path.relpath(
+            os.path.dirname(image_path), start=os.path.join(data_path, category)
+        )
+        save_folder = os.path.join(
+            results_path, category, relative_path
+        )
+        os.makedirs(save_folder, exist_ok=True)
+
         image = PIL.Image.open(image_path).convert("RGB")
         image = np.array(image)
 
@@ -130,9 +139,12 @@ def visualize_images(
         heatmap = (heatmap * 255).astype(np.uint8)
 
         mask = (segmentation > threshold).astype(np.uint8) * 255
-        mask = PIL.Image.fromarray(mask).convert("L")
-        mask = np.array(mask)
-        
+        # 调整mask的尺寸以匹配原始图像
+        if mask.shape != image.shape[:2]:
+            mask_pil = PIL.Image.fromarray(mask).convert("L")
+            mask_pil = mask_pil.resize((image.shape[1], image.shape[0]), PIL.Image.NEAREST)
+            mask = np.array(mask_pil)
+
         # Create a color mask
         color_mask = np.zeros_like(image)
         color_mask[mask > 0] = [255, 0, 0]  # Red for anomaly
@@ -140,14 +152,13 @@ def visualize_images(
         # Overlay mask on the original image
         overlay_image = PIL.Image.fromarray(image).convert("RGBA")
         mask_image = PIL.Image.fromarray(color_mask).convert("RGBA")
-        
+
         # Set alpha for the mask
         alpha_channel = np.zeros(mask.shape, dtype=np.uint8)
         alpha_channel[mask > 0] = 150  # Set alpha for the overlay
         mask_image.putalpha(PIL.Image.fromarray(alpha_channel))
 
         overlay_image = PIL.Image.alpha_composite(overlay_image, mask_image)
-
 
         savename = os.path.basename(image_path)
         save_path = os.path.join(save_folder, savename)

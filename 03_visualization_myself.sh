@@ -1,12 +1,12 @@
 #!/bin/bash
 
-datapath=./mvtec_anomaly_detection
-loadpath=./patchcore_model_weights
+datapath=/home/yinlei/projects/interest/patchcore_projects/my-patchcore-inspection/datasets_all/mvtec_dataset
+loadpath=/home/yinlei/projects/interest/patchcore_projects/my-patchcore-inspection/results/MVTecAD_Results
 
-modelfolder=IM224_WR101_L2-3_P001_D1024-384_PS-3_AN-1_RN101_L2-3_P001_D1024-384_PS-3_AN-1_DN201_L2-3_P001_D1024-384_PS-3_AN-1
-savefolder=visualization_results/$modelfolder
+modelfolder=IM320_WR50_L2-3_P001_D1024-1024_PS-5_AN-3_S39
+savefolder=visualization_results'/MVTecAD_Results/'$modelfolder
 
-datasets=('bottle'  'cable'  'capsule'  'carpet'  'grid'  'hazelnut' 'leather'  'metal_nut'  'pill' 'screw' 'tile' 'toothbrush' 'transistor' 'wood' 'zipper')
+datasets=('bottle'  'cable')
 model_flags=($(for dataset in "${datasets[@]}"; do echo '-p '$loadpath'/'$modelfolder'/models/mvtec_'$dataset; done))
 dataset_flags=($(for dataset in "${datasets[@]}"; do echo '-d '$dataset; done))
 

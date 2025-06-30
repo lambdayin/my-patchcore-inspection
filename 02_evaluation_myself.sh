@@ -4,7 +4,7 @@ loadpath=/home/yinlei/projects/interest/patchcore_projects/my-patchcore-inspecti
 modelfolder=IM320_WR50_L2-3_P001_D1024-1024_PS-5_AN-3_S39
 # modelfolder=IM320_Ensemble_L2-3_P001_D1024-384_PS-5_AN-5_S88
 # modelfolder=IM224_Ensemble_L2-3_P001_D1024-384_PS-3_AN-1
-savefolder=evaluated_results'/'$modelfolder
+savefolder=evaluated_results'/MVTecAD_Results/'$modelfolder
 
 datasets=('bottle'  'cable')
 model_flags=($(for dataset in "${datasets[@]}"; do echo '-p '$loadpath'/'$modelfolder'/models/mvtec_'$dataset; done))
